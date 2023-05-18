@@ -1,55 +1,51 @@
 package ru.praktikum.client;
 
 import io.qameta.allure.Step;
-import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 import ru.praktikum.client.base.StellarBurgersRestClient;
 import java.io.File;
 import static io.restassured.RestAssured.given;
+
 public class OrderClient extends StellarBurgersRestClient {
-    private static final String ORDER_URI = BASE_URI +  "orders";
     public String accessToken;
-    public OrderClient() {
-        RestAssured.baseURI = BASE_URI;
-    }
-    @Step("Create orders {user}")
-    public ValidatableResponse createOrders(File json) {
-        return given()
+    @Step("Create orders from Authorized {user}")
+    public ValidatableResponse createOrdersAuthorizedUser(File json) {
+        return   given()
                 .spec(getBaseRecSpec())
                 .auth().oauth2(accessToken)
                 .and()
                 .body(json)
                 .when()
-                .post(ORDER_URI)
+                .post(BASE_URI +  "orders")
                 .then();
     }
-    @Step("Create orders By Unauthorized {user}")
-    public ValidatableResponse createOrdersByUnauthorizedUser(File json) {
+    @Step("Create orders from Unauthorized {user}")
+    public ValidatableResponse createOrdersUnauthorizedUser(File json) {
         return given()
                 .spec(getBaseRecSpec())
                 .and()
                 .body(json)
                 .when()
-                .post(ORDER_URI)
+                .post(BASE_URI+"orders")
                 .then();
     }
-    @Step("Receiving orders from authorized {user}")
-    public ValidatableResponse receivingOrdersFromAuthorized() {
+    @Step("Get orders from Authorized {user}")
+    public ValidatableResponse getOrdersAuthorizedUser() {
         return given()
                 .spec(getBaseRecSpec())
                 .auth().oauth2(accessToken)
                 .and()
                 .when()
-                .get(ORDER_URI)
+                .get(BASE_URI+"orders")
                 .then();
     }
-    @Step("Receiving orders from Unauthorized {user}")
-    public ValidatableResponse receivingOrdersFromUnAuthorized() {
+    @Step("Get orders from Unauthorized {user}")
+    public ValidatableResponse getOrdersUnauthorizedUser() {
         return given()
                 .spec(getBaseRecSpec())
                 .and()
                 .when()
-                .get(ORDER_URI)
+                .get(BASE_URI+"orders")
                 .then();
     }
 }

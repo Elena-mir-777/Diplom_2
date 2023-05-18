@@ -14,14 +14,15 @@ public class BaseTest {
     @Before
     public void setUp() {
         userClient = new UserClient();
+        user = UserGenerator.getRandom();
     }
     @After
     public void clearData() {
         if (userClient.accessToken != null) {
-            userClient.delete();
+            userClient.deleteUser();
         }
     }
-    // метод получения токена пользователя
+   // метод получения токена пользователя
     protected void setToken(ValidatableResponse response) {
         String accessToken = response.extract().path("accessToken");
         if (accessToken != null) {
@@ -29,13 +30,14 @@ public class BaseTest {
         }
     }
     // метод регистрации нового пользователя
-    protected void registerNewUser(){
-        user = UserGenerator.getRandom();
-        userClient.create(user);
+    protected void registerUser() {
+        ValidatableResponse response = userClient.createUser(user);
+        setToken(response);
     }
     // метод авторизации пользователя
-    protected void authorizedUser(){
-        ValidatableResponse response = userClient.login(UserCredentials.from(user));
+    protected void authorizeUser(){
+        ValidatableResponse response = userClient.logInUser(UserCredentials.from(user));
         setToken(response);
     }
 }
+
